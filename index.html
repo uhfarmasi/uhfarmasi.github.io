@@ -13,7 +13,8 @@
     <div class="question-container hidden">
         <img id="imgSoal" src="./images/soal_1.png" alt="soal nomor 1">
         <div id="stopwatch">
-            <div id="sisaWaktuField"></div>
+            Soal Nomor: &nbsp <div id="question-number"><h1>1</h1></div><br/>
+            Sisa waktu: &nbsp&nbsp <div id="sisaWaktuField"></div>
         </div>
     </div>
 
@@ -28,9 +29,10 @@
     let testFinish = document.querySelector('.test-finish');
     let startButton = document.querySelector('.start-button');
     let sisaWaktuField = document.getElementById('sisaWaktuField');
+    let questionNumberField = document.getElementById('question-number');
 
     let isRunning = false;
-    const tempo = 10;
+    const tempo = 3;
     let sisaWaktu = tempo;
 
     let questions = ['soal_1','soal_2', 'soal_3','soal_4','soal_5'];
@@ -48,6 +50,7 @@
     
     function ChangeQuestion(){
         sisaWaktu = tempo;
+        questionNumberField.innerHTML = `<h1>${currentQuestion+1}</h1>`;
         console.log(questions[currentQuestion]);
         if(currentQuestion < questions.length){
             imgSoal.src = "./images/" + questions[currentQuestion] + ".png";
