@@ -1,0 +1,33 @@
+h1{
+    color:blue;
+}
+button{
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    background-color: red;
+}
+body{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100vh;
+}
+img{
+    width: 90vw;
+}
+.hidden{
+    display: none;
+}
+
+#stopwatch{
+    display: flex;
+    position: fixed;
+    top:0;
+    left: 0;
+    padding: 10px;
+    color: red;
+    background-color: rgba(0,0,0, 0.1);
+}
