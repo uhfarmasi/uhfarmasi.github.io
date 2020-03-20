@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test</title>
+
+    <style>
+        input, button{
+            padding: 10px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="preform">
+        <h2>Tambah Kupon</h2>
+        <input type="text" placeholder="Kupon BARU" id="input-coupon"></input><br />
+        <input type="text" placeholder="Password" id="input-password"></input><br />
+    </div>
+    <button type="button" class="start-button" onclick="AddNewCoupon()">Tambah Kupon</button>
+</body>
+
+<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-firestore.js"></script>
+
+<script>
+    var inputCoupon = document.getElementById('input-coupon');
+    var inputPassword = document.getElementById('input-password');
+
+    var firebaseConfig = {
+        apiKey: "AIzaSyDHbA7lH3G9WDRfNwif5TGFoTFKBNnorMk",
+        authDomain: "ronsovia.firebaseapp.com",
+        databaseURL: "https://ronsovia.firebaseio.com",
+        projectId: "ronsovia",
+        storageBucket: "ronsovia.appspot.com",
+        messagingSenderId: "3493120467",
+        appId: "1:3493120467:web:6af3204f6ff10d73b14726"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.firestore();
+    var couponRef = db.collection("coupons");
+
+    function AddNewCoupon(){
+        let coupon = inputCoupon.value.trim();
+        let password = inputPassword.value.trim();
+
+        if(password === 'soviaku'){
+            couponRef.doc(coupon).set({
+                insertDate: new Date()
+            })
+            .then(function(docRef) {
+                alert("Kupon berhasil disimpan");
+                inputCoupon.value = "";
+            })
+            .catch(function(error) {console.error("Error adding document: ", error);});
+        }else{
+            alert('Password Salah');
+        }
+    }
+</script>
+
+</html>

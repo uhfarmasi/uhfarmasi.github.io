@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test</title>
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div id="preform">
+        <h2>Test Copy Resep</h2>
+        <input type="text" placeholder="Kupon Test" id="input-coupon"></input><br />
+        <input type="text" placeholder="NIM" id="input-nim"></input><br />
+        <input type="text" placeholder="Nama Lengkap" id="input-name"></input><br />
+    </div>
+    <button type="button" class="start-button" onclick="StartTest()">Mulai Test</button>
+
+    <div class="question-container hidden">
+        <img id="imgSoal" src="./images/soal_1.png" alt="soal nomor 1">
+        <div id="stopwatch">
+            Soal Nomor: &nbsp <div id="question-number"><h1>1</h1></div><br/>
+            Sisa waktu: &nbsp&nbsp <div id="sisaWaktuField"></div>
+        </div>
+    </div>
+
+    <div class="test-finish hidden">
+        <h1>Test Telah Selesai</h1>
+    </div>
+</body>
+
+<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-firestore.js"></script>
+
+<script>
+    var NAME;
+    var NIM;
+    var startTime;
+    var coupon;
+    var inputName = document.getElementById('input-name');
+    var inputNim = document.getElementById('input-nim');
+    var inputCoupon = document.getElementById('input-coupon');
+    var imgSoal = document.getElementById('imgSoal');
+    var questionContainer = document.querySelector('.question-container');
+    var testFinish = document.querySelector('.test-finish');
+    var startButton = document.querySelector('.start-button');
+    var sisaWaktuField = document.getElementById('sisaWaktuField');
+    var questionNumberField = document.getElementById('question-number');
+    var preform = document.getElementById('preform');
+
+    var isRunning = false;
+    const tempo = 6*60;
+    var sisaWaktu = tempo;
+
+    var questions = ['soal_1','soal_2', 'soal_3','soal_4','soal_5'];
+    var currentQuestion = 1;
+
+    var testProcess = null;
+    var stopwatch = null;
+
+    var firebaseConfig = {
+        apiKey: "AIzaSyDHbA7lH3G9WDRfNwif5TGFoTFKBNnorMk",
+        authDomain: "ronsovia.firebaseapp.com",
+        databaseURL: "https://ronsovia.firebaseio.com",
+        projectId: "ronsovia",
+        storageBucket: "ronsovia.appspot.com",
+        messagingSenderId: "3493120467",
+        appId: "1:3493120467:web:6af3204f6ff10d73b14726"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.firestore();
+    var etiket_testRef = db.collection("etiket_test");
+    var couponRef = db.collection("coupons");
+
+    function saveToFirestore(){
+        etiket_testRef.doc(NIM).set({
+            name: NAME,
+            startTime: startTime
+        })
+        .then(function(docRef) {console.log("Document written with ID: ", docRef.id);})
+        .catch(function(error) {console.error("Error adding document: ", error);});
+    }
+
+    function saveFinishTime(){
+        etiket_testRef.doc(inputNim.value).set({
+            name: NAME,
+            startTime: startTime,
+            finishTime: new Date()
+        })
+        .then(function(docRef) {console.log("Document written with ID: ", docRef.id);})
+        .catch(function(error) {console.error("Error adding document: ", error);});
+    }
+
+    function StartTest(){
+        NAME = inputName.value.trim();
+        NIM = inputNim.value.trim();
+        startTime = new Date();
+        coupon = inputCoupon.value.trim();
+
+        couponRef.doc(coupon).get()
+        .then(function(doc) {
+            if (doc.exists) {
+                console.log('Document not found');
+                questionContainer.classList.remove('hidden');
+                startButton.classList.add('hidden');
+                preform.classList.add('hidden');
+                testProcess = setInterval(ChangeQuestion, tempo*1000);
+                stopwatch = setInterval(UpdateSisaWaktu, 1000);
+
+                saveToFirestore();
+                deleteCoupon(coupon);
+                console.log(doc.data());
+            } else {
+                alert(`Kupon '${coupon}' tidak valid`);
+                return true;
+            }
+        }).catch(function(error) {
+            console.log("Error getting document:", error);
+        });
+    }
+    
+    function ChangeQuestion(){
+        sisaWaktu = tempo;
+        questionNumberField.innerHTML = `<h1>${currentQuestion+1}</h1>`;
+        console.log(questions[currentQuestion]);
+        if(currentQuestion < questions.length){
+            imgSoal.src = "./images/" + questions[currentQuestion] + ".png";
+            currentQuestion += 1;
+        }else{
+            clearInterval(testProcess);
+            questionContainer.classList.add('hidden');
+            testFinish.classList.remove('hidden');
+
+            saveFinishTime();
+        }
+    }
+
+    function UpdateSisaWaktu(){
+        sisaWaktu -= 1;
+        sisaWaktuField.innerHTML = sisaWaktu;
+    }
+
+    function deleteCoupon(kupon){
+        couponRef.doc(kupon).delete().then(function() {
+            console.log("Document successfully deleted!");
+        }).catch(function(error) {
+            console.error("Error removing document: ", error);
+        });
+    }
+</script>
+
+</html>
