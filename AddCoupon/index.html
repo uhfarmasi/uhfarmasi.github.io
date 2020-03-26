@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test</title>
+    <title>Admin Page</title>
 
     <style>
         input, button{
@@ -13,20 +13,34 @@
     </style>
 </head>
 <body>
-    <div id="preform">
-        <h2>Tambah Kupon</h2>
-        <input type="text" placeholder="Kupon BARU" id="input-coupon"></input><br />
-        <input type="text" placeholder="Password" id="input-password"></input><br />
+    <div id="loginForm">
+        <input type="email" id="email" placeholder="email"/>
+        <input type="password" id="password" placeholder="password"/>
+        <button onclick="LoginWithEmailAndPassword()">Login</button>
     </div>
-    <button type="button" class="start-button" onclick="AddNewCoupon()">Tambah Kupon</button>
+    <div id="preform">
+        <h2>Buat Kupon</h2>
+        Berapa banyak? <input type="number" id="banyakKupon" placeholder="20" /><br />
+
+        <button type="button" id="couponButton" onclick="AddNewCoupon()">Buat Kupon</button>
+
+        <table id="kuponContainer">
+        </table>
+    </div>
+    
 </body>
 
 <script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-firestore.js"></script>
 
 <script>
-    var inputCoupon = document.getElementById('input-coupon');
-    var inputPassword = document.getElementById('input-password');
+    var loginForm = document.getElementById('loginForm');
+    var preform = document.getElementById('preform');
+    var couponButton = document.getElementById('couponButton');
+    
+    var rows = '';
+    var kuponContainer = document.getElementById('kuponContainer');
 
     var firebaseConfig = {
         apiKey: "AIzaSyDHbA7lH3G9WDRfNwif5TGFoTFKBNnorMk",
@@ -39,39 +53,91 @@
     };
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
+
+    var auth = firebase.auth();
     var db = firebase.firestore();
     var couponRef = db.collection("coupons");
 
-    function AddNewCoupon(){
-        let coupon = inputCoupon.value.trim();
-        let password = inputPassword.value.trim();
+    var coupons = [];
+    var savedCoupons = [];
 
-        if(password === 'soviaku'){
-            couponRef.doc(coupon).set({
-                insertDate: new Date()
-            })
-            .then(function(docRef) {
-                alert("Kupon berhasil disimpan");
-                inputCoupon.value = "";
-            })
-            .catch(function(error) {console.error("Error adding document: ", error);});
-        }else{
-            alert('Password Salah');
-        }
+    function LoginWithEmailAndPassword(){
+
+        var email = document.getElementById('email').value || "";
+        var password = document.getElementById('password').value || "";
+        firebase.auth().signInWithEmailAndPassword(email, password)
+        .then(user=>{
+            console.log(user);
+        })
+        .catch(function(error) {
+            alert('email atau password salah');
+        });
     }
 
-    function GenerateKupons(){
-        var kupons = ['KFSP849','LKGE876','HUYT589','RSVA246','RNFS321','STWN737','UTYR234','KNMM435','KKLL324','URKL987'];
-        kupons.forEach(k => {
-            couponRef.doc(k).set({
-                insertDate: new Date()
+    auth.onAuthStateChanged(function(user) {
+        if (user) {
+            hideLoginForm();
+        } else {
+            showLoginForm();
+        }
+    });
+
+    function AddNewCoupon(){
+        couponButton.style.display = 'none';
+        var nKupon = parseInt(document.getElementById('banyakKupon').value);
+
+        if(nKupon < 1) {
+            alert('Masukkan berapa kupon yang ingin dibuat');
+        }
+
+        while(coupons.length < nKupon){
+            let coupon = makeCoupon(6);
+            if(!coupons.includes(coupon)){
+                coupons.push(coupon);
+            }
+        }
+
+        if(auth.currentUser.email === 'pipit@canici.com'){
+            coupons.forEach(coupon=>{
+                couponRef.doc(coupon).set({
+                    insertDate: new Date()
+                })
+                .then(function(docRef) {
+                    savedCoupons.push(coupon);
+                })
+                .catch(function(error) {console.error("Error adding document: ", error);});
             })
-            .then(function(docRef) {
-                // alert("Kupon berhasil disimpan");
-                console.log(k);
-            })
-            .catch(function(error) {console.error("Error adding document: ", error);});
-        });
+
+            console.table(savedCoupons);
+        }else{
+            alert('You are not an admin');
+        }
+
+        //Print saved coupons to table
+        savedCoupons.forEach(coupon=>{
+            rows += `<tr><td>${coupon}</td></tr>`;
+        })
+        kuponContainer.innerHTML = rows;
+    }
+
+    function hideLoginForm(){
+        loginForm.style.display = 'none';
+        preform.style.display = 'block';
+    }
+
+    function showLoginForm(){
+        loginForm.style.display = 'block';
+        preform.style.display = 'none';
+    }
+
+    function makeCoupon(length) {
+        var result           = '';
+        var characters       = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        var charactersLength = characters.length;
+        for ( var i = 0; i < length; i++ ) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        return result;
     }
 </script>
 
