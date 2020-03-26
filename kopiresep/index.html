@@ -17,7 +17,7 @@
     <button type="button" class="start-button" onclick="StartTest()">Mulai Test</button>
 
     <div class="question-container hidden">
-        <img id="imgSoal" src="./images/soal_1.png" alt="soal nomor 1">
+        <img id="imgSoal" src="">
         <div id="stopwatch">
             Soal Nomor: &nbsp <div id="question-number"><h1>1</h1></div><br/>
             Sisa waktu: &nbsp&nbsp <div id="sisaWaktuField"></div>
@@ -49,11 +49,11 @@
     var preform = document.getElementById('preform');
 
     var isRunning = false;
-    const tempo = 6*60;
+    const tempo = 10;//6*60;
     var sisaWaktu = tempo;
 
     var questions = ['soal_1','soal_2', 'soal_3','soal_4','soal_5'];
-    var currentQuestion = 1;
+    var currentQuestion = 0;
 
     var testProcess = null;
     var stopwatch = null;
@@ -88,9 +88,14 @@
             startTime: startTime,
             finishTime: new Date()
         })
-        .then(function(docRef) {console.log("Document written with ID: ", docRef.id);})
-        .catch(function(error) {console.error("Error adding document: ", error);});
+        .then(function(docRef) {console.log("Document written with ID: ");})
+        .catch(function(error) {console.error("Error adding document: ");});
     }
+
+    imgSoal.onload = function(){
+        console.log('Image Loaded');
+        isRunning = true;
+    };
 
     function StartTest(){
         NAME = inputName.value.trim();
@@ -101,15 +106,16 @@
         couponRef.doc(coupon).get()
         .then(function(doc) {
             if (doc.exists) {
-                console.log('Document not found');
+                console.log('Kupon VALID');
                 questionContainer.classList.remove('hidden');
                 startButton.classList.add('hidden');
                 preform.classList.add('hidden');
-                testProcess = setInterval(ChangeQuestion, tempo*1000);
+                // testProcess = setInterval(ChangeQuestion, tempo*1000);
                 stopwatch = setInterval(UpdateSisaWaktu, 1000);
 
+                ChangeQuestion();
                 saveToFirestore();
-                deleteCoupon(coupon);
+                
                 console.log(doc.data());
             } else {
                 alert(`Kupon '${coupon}' tidak valid`);
@@ -124,21 +130,31 @@
         sisaWaktu = tempo;
         questionNumberField.innerHTML = `<h1>${currentQuestion+1}</h1>`;
         console.log(questions[currentQuestion]);
+
         if(currentQuestion < questions.length){
             imgSoal.src = "./images/" + questions[currentQuestion] + ".png";
             currentQuestion += 1;
         }else{
-            clearInterval(testProcess);
+            clearInterval(stopwatch);
+            // clearInterval(testProcess);
             questionContainer.classList.add('hidden');
             testFinish.classList.remove('hidden');
 
             saveFinishTime();
+            deleteCoupon(coupon);
         }
     }
 
     function UpdateSisaWaktu(){
-        sisaWaktu -= 1;
-        sisaWaktuField.innerHTML = sisaWaktu;
+        if(sisaWaktu < 0){
+            ChangeQuestion();
+            isRunning = false;
+        }
+
+        if(isRunning){
+            sisaWaktu -= 1;
+            if(sisaWaktu>-1) sisaWaktuField.innerHTML = sisaWaktu;
+        }
     }
 
     function deleteCoupon(kupon){

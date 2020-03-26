@@ -59,6 +59,20 @@
             alert('Password Salah');
         }
     }
+
+    function GenerateKupons(){
+        var kupons = ['KFSP849','LKGE876','HUYT589','RSVA246','RNFS321','STWN737','UTYR234','KNMM435','KKLL324','URKL987'];
+        kupons.forEach(k => {
+            couponRef.doc(k).set({
+                insertDate: new Date()
+            })
+            .then(function(docRef) {
+                // alert("Kupon berhasil disimpan");
+                console.log(k);
+            })
+            .catch(function(error) {console.error("Error adding document: ", error);});
+        });
+    }
 </script>
 
 </html>
