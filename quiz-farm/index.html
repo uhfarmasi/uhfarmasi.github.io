@@ -108,6 +108,11 @@
         startTime = new Date();
         coupon = inputCoupon.value.trim();
 
+        if(!isValid(NAME,NIM, coupon)){
+            hideLoadingDialog();
+            return true;
+        }
+
         couponRef.doc(coupon).get()
         .then(function(doc) {
             if (doc.exists) {
@@ -173,6 +178,22 @@
         }).catch(function(error) {
             console.error("Error removing document: ", error);
         });
+    }
+
+    function isValid(name, nim, kupon){
+        if(kupon.length < 5){
+            alert('Masukkan kupon dengan benar');
+            return false;
+        }
+        if(name.length < 2){
+            alert('Masukkan nama dengan benar');
+            return false;
+        }
+        if(nim.length < 2){
+            alert('Masukkan NIM dengan benar');
+            return false;
+        }
+        return true;
     }
 
     function showLoadingDialog(){
