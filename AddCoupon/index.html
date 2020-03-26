@@ -39,7 +39,6 @@
     var preform = document.getElementById('preform');
     var couponButton = document.getElementById('couponButton');
     
-    var rows = '';
     var kuponContainer = document.getElementById('kuponContainer');
 
     var firebaseConfig = {
@@ -104,7 +103,7 @@
                 })
                 .then(function(docRef) {
                     savedCoupons.push(coupon);
-                    rows += `<tr><td>${coupon}</td></tr>`;
+                    kuponContainer.innerHTML += `<tr><td>${coupon}</td></tr>`;
                 })
                 .catch(function(error) {console.error("Error adding document: ", error);});
             })
@@ -113,8 +112,6 @@
         }else{
             alert('You are not an admin');
         }
-
-        kuponContainer.innerHTML = rows;
     }
 
     function hideLoginForm(){

@@ -54,7 +54,7 @@
     var loadingDialog = document.getElementById('loading-dialog');
 
     var isRunning = false;
-    const tempo = 6*60 + 1;//6*60;
+    const tempo = 6*60 + 1;
     var sisaWaktu = tempo;
 
     var questions = ['soal_1','soal_2', 'soal_3','soal_4','soal_5'];
@@ -132,11 +132,7 @@
     }
     
     function ChangeQuestion(){
-
         showLoadingDialog();
-        // while(localStorage.getItem(`${currentQuestion}_is_done`) == 'true'){
-        //     currentQuestion += 1;
-        // }
 
         sisaWaktu = tempo;
         questionNumberField.innerHTML = `<h1>${currentQuestion+1}</h1>`;
