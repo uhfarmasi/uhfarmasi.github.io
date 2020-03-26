@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test</title>
+    <title>Farmasi Universitas Hamzanwadi</title>
 
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
@@ -19,13 +19,17 @@
     <div class="question-container hidden">
         <img id="imgSoal" src="">
         <div id="stopwatch">
-            Soal Nomor: &nbsp <div id="question-number"><h1>1</h1></div><br/>
+            Soal Nomor: &nbsp <div id="question-number"><h1></h1></div><br/>
             Sisa waktu: &nbsp&nbsp <div id="sisaWaktuField"></div>
         </div>
     </div>
 
     <div class="test-finish hidden">
         <h1>Test Telah Selesai</h1>
+    </div>
+
+    <div id="loading-dialog">
+        <div class="lds-ripple"><div></div><div></div></div>
     </div>
 </body>
 
@@ -47,9 +51,10 @@
     var sisaWaktuField = document.getElementById('sisaWaktuField');
     var questionNumberField = document.getElementById('question-number');
     var preform = document.getElementById('preform');
+    var loadingDialog = document.getElementById('loading-dialog');
 
     var isRunning = false;
-    const tempo = 10;//6*60;
+    const tempo = 5 + 1;//6*60;
     var sisaWaktu = tempo;
 
     var questions = ['soal_1','soal_2', 'soal_3','soal_4','soal_5'];
@@ -78,14 +83,12 @@
             name: NAME,
             startTime: startTime
         })
-        .then(function(docRef) {console.log("Document written with ID: ", docRef.id);})
+        .then(function(docRef) {console.log("Document written with ID: ");})
         .catch(function(error) {console.error("Error adding document: ", error);});
     }
 
     function saveFinishTime(){
-        etiket_testRef.doc(inputNim.value).set({
-            name: NAME,
-            startTime: startTime,
+        etiket_testRef.doc(inputNim.value).update({
             finishTime: new Date()
         })
         .then(function(docRef) {console.log("Document written with ID: ");})
@@ -95,9 +98,11 @@
     imgSoal.onload = function(){
         console.log('Image Loaded');
         isRunning = true;
+        hideLoadingDialog();
     };
 
     function StartTest(){
+        showLoadingDialog();
         NAME = inputName.value.trim();
         NIM = inputNim.value.trim();
         startTime = new Date();
@@ -110,7 +115,6 @@
                 questionContainer.classList.remove('hidden');
                 startButton.classList.add('hidden');
                 preform.classList.add('hidden');
-                // testProcess = setInterval(ChangeQuestion, tempo*1000);
                 stopwatch = setInterval(UpdateSisaWaktu, 1000);
 
                 ChangeQuestion();
@@ -119,6 +123,7 @@
                 console.log(doc.data());
             } else {
                 alert(`Kupon '${coupon}' tidak valid`);
+                hideLoadingDialog();
                 return true;
             }
         }).catch(function(error) {
@@ -127,18 +132,24 @@
     }
     
     function ChangeQuestion(){
+
+        showLoadingDialog();
+        // while(localStorage.getItem(`${currentQuestion}_is_done`) == 'true'){
+        //     currentQuestion += 1;
+        // }
+
         sisaWaktu = tempo;
         questionNumberField.innerHTML = `<h1>${currentQuestion+1}</h1>`;
-        console.log(questions[currentQuestion]);
 
         if(currentQuestion < questions.length){
             imgSoal.src = "./images/" + questions[currentQuestion] + ".png";
             currentQuestion += 1;
         }else{
             clearInterval(stopwatch);
-            // clearInterval(testProcess);
             questionContainer.classList.add('hidden');
             testFinish.classList.remove('hidden');
+
+            hideLoadingDialog();
 
             saveFinishTime();
             deleteCoupon(coupon);
@@ -147,6 +158,7 @@
 
     function UpdateSisaWaktu(){
         if(sisaWaktu < 0){
+            localStorage.setItem(`${currentQuestion}_is_done`, true);
             ChangeQuestion();
             isRunning = false;
         }
@@ -154,6 +166,7 @@
         if(isRunning){
             sisaWaktu -= 1;
             if(sisaWaktu>-1) sisaWaktuField.innerHTML = sisaWaktu;
+            localStorage.setItem(`soal_${currentQuestion}`, sisaWaktu);
         }
     }
 
@@ -163,6 +176,14 @@
         }).catch(function(error) {
             console.error("Error removing document: ", error);
         });
+    }
+
+    function showLoadingDialog(){
+        loadingDialog.style.display = 'flex';
+    }
+
+    function hideLoadingDialog(){
+        loadingDialog.style.display = 'none';
     }
 </script>
 
