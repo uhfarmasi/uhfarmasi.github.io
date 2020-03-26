@@ -10,6 +10,12 @@
             padding: 10px;
             margin: 10px;
         }
+
+        #signOutButton{
+            position: fixed;
+            top : 10px;
+            right: 10px;
+        }
     </style>
 </head>
 <body>
@@ -24,6 +30,7 @@
 
         <button type="button" id="couponButton" onclick="AddNewCoupon()">Buat Kupon</button>
 
+        <button id="signOutButton" onclick="SignOut()">Sign Out</button>
         <table id="kuponContainer">
         </table>
     </div>
@@ -35,7 +42,6 @@
 <script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-firestore.js"></script>
 
 <script>
-window.addEventListener('DOMContentLoaded', (event) => {
     var loginForm = document.getElementById('loginForm');
     var preform = document.getElementById('preform');
     var couponButton = document.getElementById('couponButton');
@@ -133,8 +139,15 @@ window.addEventListener('DOMContentLoaded', (event) => {
             result += characters.charAt(Math.floor(Math.random() * charactersLength));
         }
         return result;
-    } 
-});
+    }
+
+    function SignOut(event){
+        firebase.auth().signOut().then(function() {
+            console.log('Signed Out');
+        }, function(error) {
+            console.error('Sign Out Error', error);
+        });
+    }
 </script>
 
 </html>
