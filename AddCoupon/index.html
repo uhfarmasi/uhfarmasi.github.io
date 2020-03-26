@@ -104,6 +104,7 @@
                 })
                 .then(function(docRef) {
                     savedCoupons.push(coupon);
+                    rows += `<tr><td>${coupon}</td></tr>`;
                 })
                 .catch(function(error) {console.error("Error adding document: ", error);});
             })
@@ -113,10 +114,6 @@
             alert('You are not an admin');
         }
 
-        //Print saved coupons to table
-        savedCoupons.forEach(coupon=>{
-            rows += `<tr><td>${coupon}</td></tr>`;
-        })
         kuponContainer.innerHTML = rows;
     }
 
