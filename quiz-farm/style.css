@@ -32,6 +32,10 @@ img{
     display: none;
 }
 
+#preform h2{
+  text-align: center;
+}
+
 #stopwatch{
     position: fixed;
     top:0;
