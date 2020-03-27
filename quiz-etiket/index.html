@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmasi Universitas Hamzanwadi</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../icons/favicon-16x16.png">
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div id="preform">
+        <h2>Test Copy Resep</h2>
+        <input type="text" placeholder="Kupon Test" id="input-coupon"></input><br />
+        <input type="text" placeholder="NIM" id="input-nim"></input><br />
+        <input type="text" placeholder="Nama Lengkap" id="input-name"></input><br />
+    </div>
+    <button type="button" class="start-button" onclick="StartTest()">Mulai Test</button>
+
+    <div class="question-container hidden">
+        <img id="imgSoal" src="">
+        <div id="stopwatch">
+            Soal Nomor: &nbsp <div id="question-number"><h1></h1></div><br/>
+            Sisa waktu: &nbsp&nbsp <div id="sisaWaktuField"></div>
+        </div>
+    </div>
+
+    <div class="test-finish hidden">
+        <h1>Test Telah Selesai</h1>
+    </div>
+
+    <div id="loading-dialog">
+        <div class="lds-ripple"><div></div><div></div></div>
+    </div>
+</body>
+
+<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-firestore.js"></script>
+
+<script>
+    var NAME;
+    var NIM;
+    var DOC_ID;
+    var startTime;
+    var coupon;
+    var inputName = document.getElementById('input-name');
+    var inputNim = document.getElementById('input-nim');
+    var inputCoupon = document.getElementById('input-coupon');
+    var imgSoal = document.getElementById('imgSoal');
+    var questionContainer = document.querySelector('.question-container');
+    var testFinish = document.querySelector('.test-finish');
+    var startButton = document.querySelector('.start-button');
+    var sisaWaktuField = document.getElementById('sisaWaktuField');
+    var questionNumberField = document.getElementById('question-number');
+    var preform = document.getElementById('preform');
+    var loadingDialog = document.getElementById('loading-dialog');
+
+    var isRunning = false;
+    const tempo = 6*60 + 1;
+    var sisaWaktu = tempo;
+
+    var questions = ['soal_1','soal_2', 'soal_3','soal_4','soal_5'];
+    var currentQuestion = 0;
+
+    var testProcess = null;
+    var stopwatch = null;
+
+    var firebaseConfig = {
+        apiKey: "AIzaSyDHbA7lH3G9WDRfNwif5TGFoTFKBNnorMk",
+        authDomain: "ronsovia.firebaseapp.com",
+        databaseURL: "https://ronsovia.firebaseio.com",
+        projectId: "ronsovia",
+        storageBucket: "ronsovia.appspot.com",
+        messagingSenderId: "3493120467",
+        appId: "1:3493120467:web:6af3204f6ff10d73b14726"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.firestore();
+    var etiket_testRef = db.collection("test_etiket");
+    var couponRef = db.collection("coupons_etiket");
+
+    function saveToFirestore(){
+        etiket_testRef.doc(DOC_ID).set({
+            name: NAME,
+            coupon: coupon,
+            startTime: startTime
+        })
+        .then(function(docRef) {console.log("Document written with ID: ");})
+        .catch(function(error) {console.error("Error adding document: ", error);});
+    }
+
+    function saveFinishTime(){
+        etiket_testRef.doc(DOC_ID).update({
+            finishTime: new Date()
+        })
+        .then(function(docRef) {console.log("Document written with ID: ");})
+        .catch(function(error) {console.error("Error adding document: ");});
+    }
+
+    function saveCurrentQuestionToFirestore(){
+        let updatedData = {};
+        updatedData[`finish_soal_${currentQuestion}`] = new Date();
+
+        etiket_testRef.doc(DOC_ID).update(updatedData)
+        .then(function(docRef) {console.log("Document written with ID: ");})
+        .catch(function(error) {console.error("Error adding document: ");});
+    }
+
+    imgSoal.onload = function(){
+        console.log('Image Loaded');
+        isRunning = true;
+        hideLoadingDialog();
+    };
+
+    function StartTest(){
+        showLoadingDialog();
+        NAME = inputName.value.trim();
+        NIM = inputNim.value.trim();
+        startTime = new Date();
+        coupon = inputCoupon.value.trim();
+        DOC_ID = `${NIM}-${coupon}`;
+
+        if(!isValid(NAME,NIM, coupon)){
+            hideLoadingDialog();
+            return true;
+        }
+
+        couponRef.doc(coupon).get()
+        .then(function(doc) {
+            if (doc.exists) {
+                console.log('Kupon VALID');
+                questionContainer.classList.remove('hidden');
+                startButton.classList.add('hidden');
+                preform.classList.add('hidden');
+                stopwatch = setInterval(UpdateSisaWaktu, 1000);
+
+                ChangeQuestion();
+                saveToFirestore();
+                
+                console.log(doc.data());
+            } else {
+                alert(`Kupon '${coupon}' tidak valid`);
+                hideLoadingDialog();
+                return true;
+            }
+        }).catch(function(error) {
+            console.log("Error getting document:", error);
+            alert('Terdapat masalah koneksi. Silahkan refresh halaman ini untuk mencoba kembali');
+        });
+    }
+    
+    function ChangeQuestion(){
+        showLoadingDialog();
+
+        sisaWaktu = tempo;
+        questionNumberField.innerHTML = `<h1>${currentQuestion+1}</h1>`;
+
+        if(currentQuestion < questions.length){
+            imgSoal.src = "./images/" + questions[currentQuestion] + ".png";
+            currentQuestion += 1;
+        }else{
+            clearInterval(stopwatch);
+            questionContainer.classList.add('hidden');
+            testFinish.classList.remove('hidden');
+
+            hideLoadingDialog();
+
+            saveFinishTime();
+            deleteCoupon(coupon);
+        }
+    }
+
+    function UpdateSisaWaktu(){
+        if(sisaWaktu < 0){
+            saveCurrentQuestionToFirestore();
+            ChangeQuestion();
+            isRunning = false;
+        }
+
+        if(isRunning){
+            sisaWaktu -= 1;
+            if(sisaWaktu>-1) sisaWaktuField.innerHTML = sisaWaktu;
+            localStorage.setItem(`soal_${currentQuestion}`, sisaWaktu);
+        }
+    }
+
+    function deleteCoupon(kupon){
+        couponRef.doc(kupon).delete().then(function() {
+            console.log("Document successfully deleted!");
+        }).catch(function(error) {
+            console.error("Error removing document: ", error);
+        });
+    }
+
+    function isValid(name, nim, kupon){
+        if(kupon.length < 5){
+            alert('Masukkan kupon dengan benar');
+            return false;
+        }
+        if(name.length < 2){
+            alert('Masukkan nama dengan benar');
+            return false;
+        }
+        if(nim.length < 2){
+            alert('Masukkan NIM dengan benar');
+            return false;
+        }
+        return true;
+    }
+
+    function showLoadingDialog(){
+        loadingDialog.style.display = 'flex';
+    }
+
+    function hideLoadingDialog(){
+        loadingDialog.style.display = 'none';
+    }
+</script>
+
+</html>
