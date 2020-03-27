@@ -39,6 +39,7 @@
 <script>
     var NAME;
     var NIM;
+    var DOC_ID;
     var startTime;
     var coupon;
     var inputName = document.getElementById('input-name');
@@ -79,8 +80,9 @@
     var couponRef = db.collection("coupons");
 
     function saveToFirestore(){
-        etiket_testRef.doc(NIM).set({
+        etiket_testRef.doc(DOC_ID).set({
             name: NAME,
+            coupon: coupon,
             startTime: startTime
         })
         .then(function(docRef) {console.log("Document written with ID: ");})
@@ -88,9 +90,18 @@
     }
 
     function saveFinishTime(){
-        etiket_testRef.doc(inputNim.value).update({
+        etiket_testRef.doc(DOC_ID).update({
             finishTime: new Date()
         })
+        .then(function(docRef) {console.log("Document written with ID: ");})
+        .catch(function(error) {console.error("Error adding document: ");});
+    }
+
+    function saveCurrentQuestionToFirestore(){
+        let updatedData = {};
+        updatedData[`finish_soal_${currentQuestion}`] = new Date();
+
+        etiket_testRef.doc(DOC_ID).update(updatedData)
         .then(function(docRef) {console.log("Document written with ID: ");})
         .catch(function(error) {console.error("Error adding document: ");});
     }
@@ -107,6 +118,7 @@
         NIM = inputNim.value.trim();
         startTime = new Date();
         coupon = inputCoupon.value.trim();
+        DOC_ID = `${NIM}-${coupon}`;
 
         if(!isValid(NAME,NIM, coupon)){
             hideLoadingDialog();
@@ -160,7 +172,7 @@
 
     function UpdateSisaWaktu(){
         if(sisaWaktu < 0){
-            localStorage.setItem(`${currentQuestion}_is_done`, true);
+            saveCurrentQuestionToFirestore();
             ChangeQuestion();
             isRunning = false;
         }
