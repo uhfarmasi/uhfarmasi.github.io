@@ -63,21 +63,17 @@
     var auth = firebase.auth();
     var db = firebase.firestore();
     var couponRef = db.collection("coupons");
+    var etiket_couponRef = db.collection("coupons_etiket");
 
     var coupons = [];
     var savedCoupons = [];
 
     function LoginWithEmailAndPassword(){
-
         var email = document.getElementById('email').value || "";
         var password = document.getElementById('password').value || "";
         firebase.auth().signInWithEmailAndPassword(email, password)
-        .then(user=>{
-            console.log(user);
-        })
-        .catch(function(error) {
-            alert('email atau password salah');
-        });
+        .then(user=>{console.log(user);})
+        .catch(function(error) {alert('email atau password salah');});
     }
 
     auth.onAuthStateChanged(function(user) {
@@ -103,18 +99,19 @@
             }
         }
 
-        if(auth.currentUser.email === 'pipit@canici.com'){
+        if(auth.currentUser){
             coupons.forEach(coupon=>{
-                couponRef.doc(coupon).set({
-                    insertDate: new Date()
-                })
+                couponRef.doc(coupon).set({insertDate: new Date()})
                 .then(function(docRef) {
-                    savedCoupons.push(coupon);
-                    kuponContainer.innerHTML += `<tr><td>${coupon}</td></tr>`;
+                    etiket_couponRef.doc(coupon).set({insertDate: new Date()})
+                    .then(function(docRef) {
+                        savedCoupons.push(coupon);
+                        kuponContainer.innerHTML += `<tr><td>${coupon}</td></tr>`;
+                    })
+                    .catch(function(error) {console.error("Error adding document: ", error);});
                 })
                 .catch(function(error) {console.error("Error adding document: ", error);});
-            })
-
+            });
             console.table(savedCoupons);
         }else{
             alert('You are not an admin');
