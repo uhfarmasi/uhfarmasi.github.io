@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmasi Universitas Hamzanwadi</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32x32.png">
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div id="preform">
+        <h2>Test Copy Resep</h2>
+        <input type="text" placeholder="Kupon Test" id="input-coupon"></input><br />
+        <input type="text" placeholder="NIM" id="input-nim"></input><br />
+        <input type="text" placeholder="Nama Lengkap" id="input-name"></input><br />
+
+        <button type="button" class="start-button" onclick="StartTest()">Mulai Test</button>
+    </div>
+    
+
+    <div class="question-container hidden">
+        <img id="imgSoal" src="">
+        <div id="stopwatch">
+            Soal Nomor: &nbsp <div id="question-number"><h1></h1></div><br/>
+            Sisa waktu: &nbsp&nbsp <div id="sisaWaktuField"></div>
+        </div>
+        <textarea id="answerInput" name="Text1" cols="40" rows="10" placeholder="Ketik jawaban di sini"></textarea><br/>
+        <span>Catatan: Jawaban bisa diubah selama masih ada waktu</span><br/>
+        <button id="answerButton" onclick="sendAnswer()">Kirim Jawaban</button>
+    </div>
+
+    <div class="test-finish hidden">
+        <h1>Test Telah Selesai</h1>
+    </div>
+
+    <div id="loading-dialog">
+        <div class="lds-ripple"><div></div><div></div></div>
+        <br/>
+        <div id="loadingMessage"></div>
+    </div>
+</body>
+
+<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-firestore.js"></script>
+<script src="./soal-soal.js"></script>
+<script src="./main.js"></script>
+</html>
