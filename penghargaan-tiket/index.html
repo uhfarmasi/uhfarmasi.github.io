@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,8 +9,9 @@
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-    <div id="preform">
-        <h2>Test Copy Resep</h2>
+    <div id="preform" class="">
+        <img id="logo-uh" src="../images/logo-uh-200x200.png"/>
+        <h2>Test Penghargaan Resep</h2>
         <input type="text" placeholder="Kupon Test" id="input-coupon"></input><br />
         <input type="text" placeholder="NIM" id="input-nim"></input><br />
         <input type="text" placeholder="Nama Lengkap" id="input-name"></input><br />
@@ -20,14 +21,21 @@
     
 
     <div class="question-container hidden">
-        <img id="imgSoal" src="">
         <div id="stopwatch">
             Soal Nomor: &nbsp <div id="question-number"><h1></h1></div><br/>
             Sisa waktu: &nbsp&nbsp <div id="sisaWaktuField"></div>
         </div>
-        <textarea id="answerInput" name="Text1" cols="40" rows="10" placeholder="Ketik jawaban di sini"></textarea><br/>
-        <span>Catatan: Jawaban bisa diubah selama masih ada waktu</span><br/>
-        <button id="answerButton" onclick="sendAnswer()">Kirim Jawaban</button>
+
+        <div class="question-body">
+            <img id="imgSoal" src="">
+
+            <div class="answer-container">
+                <textarea id="answerInput" name="Text1" cols="40" rows="6" spellcheck="false" placeholder="Ketik jawaban di sini"></textarea><br/>
+                <span class="label danger">Setelah mengirim jawaban, anda akan pindah ke soal berikutnya.</span><br/>
+                <button id="answerButton" onclick="sendAnswer()">Kirim Jawaban</button>
+            </div>
+        </div>
+        
     </div>
 
     <div class="test-finish hidden">

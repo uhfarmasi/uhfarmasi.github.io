@@ -1,3 +1,5 @@
+const TEST_ID = 'PR_01';
+
 var NAME;
 var NIM;
 var DOC_ID;
@@ -112,15 +114,14 @@ function StartTest(){
 
 function ChangeQuestion(){
     showLoadingDialog();
-
     //Check Local Storage to see if the question is already answered
-    while(localStorage.getItem(`soal_${currentQuestion}`) == 'DONE'){
+    let sisaWaktuStorage = localStorage.getItem(`${TEST_ID}_${currentQuestion}`);
+    while(sisaWaktuStorage == 'DONE' && currentQuestion < questions.length){
         currentQuestion += 1;
+        sisaWaktuStorage = localStorage.getItem(`${TEST_ID}_${currentQuestion}`);
     }
     // sisaWaktu = tempo;
-
-    sisaWaktuStorage = parseInt(localStorage.getItem(`soal_${currentQuestion}`));
-    sisaWaktu =  sisaWaktuStorage > -1 ? sisaWaktuStorage : tempo;
+    sisaWaktu =  parseInt(sisaWaktuStorage) > -1 ? sisaWaktuStorage : tempo;
 
     questionNumberField.innerHTML = `<h1>${currentQuestion+1}</h1>`;
 
@@ -141,17 +142,13 @@ function ChangeQuestion(){
 
 function UpdateSisaWaktu(){
     if(sisaWaktu < 0){
-        localStorage.setItem(`soal_${currentQuestion}`, 'DONE');
-        answerInput.value = '';
-        saveCurrentQuestionToFirestore();
-        ChangeQuestion();
-        isRunning = false;
+        moveToNextQuestion();
     }
 
     if(isRunning){
         sisaWaktu -= 1;
         if(sisaWaktu>-1) sisaWaktuField.innerHTML = sisaWaktu;
-        localStorage.setItem(`soal_${currentQuestion}`, sisaWaktu);
+        localStorage.setItem(`${TEST_ID}_${currentQuestion}`, sisaWaktu);
     }
 }
 
@@ -169,10 +166,19 @@ async function sendAnswer(){
     answer[`soal_${currentQuestion}`] = answerInput.value;
     try{
         await answerRef.doc(DOC_ID).set(answer);
+        moveToNextQuestion();
     }catch(error){
         alert('Gagal mengirim jawaban. Pastikan anda terhubung internet');
     }
     hideLoadingDialog();
+}
+
+function moveToNextQuestion(){
+    localStorage.setItem(`${TEST_ID}_${currentQuestion}`, 'DONE');
+    answerInput.value = '';
+    saveCurrentQuestionToFirestore();
+    ChangeQuestion();
+    isRunning = false;
 }
 
 function isValid(name, nim, kupon){
@@ -202,6 +208,8 @@ function hideLoadingDialog(){
 
 function cleanStorage(){
     for(let i=0; i<questions.length; i++){
-        localStorage.setItem(`soal_${i}`, '');
+        localStorage.setItem(`${TEST_ID}_${i}`, '');
     }
+
+    localStorage.clear();
 }
