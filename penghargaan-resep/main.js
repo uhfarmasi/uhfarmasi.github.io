@@ -162,7 +162,7 @@ function deleteCoupon(kupon){
 
 async function sendAnswer(){
     showLoadingDialog('Sedang mengirim jawaban ...');
-    let answer = {};
+    let answer = {name: NAME, nim: NIM};
     answer[`soal_${currentQuestion+1}`] = answerInput.value;
     try{
         await answerRef.doc(DOC_ID).set(answer, {merge: true});
