@@ -163,7 +163,7 @@ function deleteCoupon(kupon){
 async function sendAnswer(){
     showLoadingDialog('Sedang mengirim jawaban ...');
     let answer = {};
-    answer[`soal_${currentQuestion}`] = answerInput.value;
+    answer[`soal_${currentQuestion+1}`] = answerInput.value;
     try{
         await answerRef.doc(DOC_ID).set(answer, {merge: true});
         moveToNextQuestion();
@@ -182,16 +182,16 @@ function moveToNextQuestion(){
 }
 
 function isValid(name, nim, kupon){
-    if(kupon.length < 5){
+    if(kupon.length < 3){
         alert('Masukkan kupon dengan benar');
         return false;
     }
     if(name.length < 2){
-        alert('Masukkan nama dengan benar');
+        alert('Masukkan nama lengkap anda');
         return false;
     }
     if(nim.length < 2){
-        alert('Masukkan NIM dengan benar');
+        alert('Masukkan NPM anda');
         return false;
     }
     return true;
@@ -210,6 +210,5 @@ function cleanStorage(){
     for(let i=0; i<questions.length; i++){
         localStorage.setItem(`${TEST_ID}_${i}`, '');
     }
-
     localStorage.clear();
 }
