@@ -165,7 +165,7 @@ async function sendAnswer(){
     let answer = {};
     answer[`soal_${currentQuestion}`] = answerInput.value;
     try{
-        await answerRef.doc(DOC_ID).set(answer);
+        await answerRef.doc(DOC_ID).set(answer, {merge: true});
         moveToNextQuestion();
     }catch(error){
         alert('Gagal mengirim jawaban. Pastikan anda terhubung internet');
