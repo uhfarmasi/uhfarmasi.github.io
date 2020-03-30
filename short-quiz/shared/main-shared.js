@@ -165,7 +165,6 @@ function moveToNextQuestion(){
     answerInput.value = '';
     saveCurrentQuestionToFirestore();
     ChangeQuestion();
-    isRunning = false;
 }
 
 function isValid(name, nim, kupon){
