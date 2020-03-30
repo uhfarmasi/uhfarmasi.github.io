@@ -16,7 +16,7 @@ var diare_patofis_questions = [
 ];
 
 var diare_farmako_questions = [
-    "1.	Bolehkah loperamide diberikan pada pasien anak-anak? Jelaskan",
+    "1.	Bolehkah loperamide diberikan pada pasien anak-anak di bawah 2 tahun? Jelaskan",
     "2.	Jelaskan mekanisme loeperamid",
     "3.	Sebutkan 3 obat golongan opiat untuk terapi diare",
     "4.	Mengapa dehidrasi bisa menyebabkan hipotensi pleural?",
