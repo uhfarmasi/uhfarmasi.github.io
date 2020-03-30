@@ -18,6 +18,7 @@ var loadingMessage = document.getElementById('loadingMessage');
 var answerButton = document.getElementById('answerButton');
 var answerInput = document.getElementById('answerInput');
 
+var questions;
 
 var firebaseConfig = {
     apiKey: "AIzaSyDHbA7lH3G9WDRfNwif5TGFoTFKBNnorMk",
@@ -92,6 +93,7 @@ function StartTest(){
     }).catch(function(error) {
         console.log("Error getting document:", error);
         alert('Terdapat masalah koneksi. Silahkan refresh halaman ini untuk mencoba kembali');
+        location.reload();
     });
 }
 

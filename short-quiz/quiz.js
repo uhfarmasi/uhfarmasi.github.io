@@ -7,25 +7,6 @@ var etiket_testRef = db.collection(TEST_ID);
 var couponRef = db.collection("coupons_"+TEST_ID);
 var answerRef = db.collection("answers_"+TEST_ID);
 
-var questions;
-
-switch(testName){
-    case 'diare_farmako' : testTitle.innerHTML = "Test Diare Farmakoterapi"; break;
-    case 'diare_patofis' : testTitle.innerHTML = "Test Diare Patofisiologi"; break;
-    case 'infeksi_farmako' : testTitle.innerHTML = "Test Infeksi Farmakoterapi"; break;
-    case 'infeksi_patofis' : testTitle.innerHTML = "Test Infeksi Patofisiologi"; break;
-    default: alert('PASTIKAN URL BENAR'); break;
-}
-
-switch(testName){
-    case 'diare_farmako' : questions = diare_farmako_questions; break;
-    case 'diare_patofis' : questions = diare_patofis_questions; break;
-    case 'infeksi_farmako' : questions = infeksi_farmako_questions; break;
-    case 'infeksi_patofis' : questions = infeksi_patofis_questions; break;
-    default: alert('PASTIKAN URL BENAR'); break;
-}
-
-
 var diare_patofis_questions = [
     "1. Sebutkan dan jelaskan beberapa klasifikasi diare",
     "2.	Jelaskan mekanisme dari diare osmotik karena makanan misalnya PEG",
@@ -58,6 +39,22 @@ var infeksi_farmako_questions = [
     "4. Jelaskan secara umum mekanisme aksi obat golongan opioid sebagai analgetik",
     "5. Jelaskan secara umum mekanisme aksi obat golongan NSAID"
 ]
+
+switch(testName){
+    case 'diare_farmako' : questions = diare_farmako_questions; break;
+    case 'diare_patofis' : questions = diare_patofis_questions; break;
+    case 'infeksi_farmako' : questions = infeksi_farmako_questions; break;
+    case 'infeksi_patofis' : questions = infeksi_patofis_questions; break;
+    default: alert('PASTIKAN URL BENAR'); break;
+}
+
+switch(testName){
+    case 'diare_farmako' : testTitle.innerHTML = "Test Diare Farmakoterapi"; break;
+    case 'diare_patofis' : testTitle.innerHTML = "Test Diare Patofisiologi"; break;
+    case 'infeksi_farmako' : testTitle.innerHTML = "Test Infeksi Farmakoterapi"; break;
+    case 'infeksi_patofis' : testTitle.innerHTML = "Test Infeksi Patofisiologi"; break;
+    default: alert('PASTIKAN URL BENAR'); break;
+}
 
 var isRunning = false;
 const tempo = 2*60 + 1;
