@@ -4,6 +4,9 @@ img#logo-uh{
 .text-center{
   text-align: center;
 }
+ul li{
+  text-align: left;
+}
 #question-text{
   width: 400px;
 }

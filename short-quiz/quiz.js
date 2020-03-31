@@ -40,11 +40,26 @@ var infeksi_farmako_questions = [
     "5. Jelaskan secara umum mekanisme aksi obat golongan NSAID"
 ]
 
+var kasus_konversi_questions = [
+    "1. Px 34 th mendapatkan Infus RL volume 500 ml. Mendapat terapi sefadroksil dosis 1g/hari dalam dosis terbagi setiap 12 jam. Dokter menghendaki infus intermitn tiap 12 jam selama 3 jam. Berapa kecepatan tetes infus permenit nya?",
+    "2. Cairan yang tersedian 500 cc NaCl  0,9%. Diberikan dengan titrasi infus 20 tetes/menit. Berapa jam diburuhkan sampai cairan tersebut habis?",
+    `
+    <ul>
+        <li>Ciprofloksasil IV</li>
+        <li>Sediaan 10 mg/mL</li>
+        <li>Volume sediaan 40 mL</li>
+    </ul>
+    <br />
+    Anak 17 tahun mendapatkan ciprofloksasin 2 x sehari 400 mg. Berapa kecepatan tetes macro, jika dikehendaki infus selama 50 menit ??
+    `
+]
+
 switch(testName){
     case 'diare_farmako' : questions = diare_farmako_questions; break;
     case 'diare_patofis' : questions = diare_patofis_questions; break;
     case 'infeksi_farmako' : questions = infeksi_farmako_questions; break;
     case 'infeksi_patofis' : questions = infeksi_patofis_questions; break;
+    case 'kasus_konversi' : questions = kasus_konversi_questions; break;
     default: alert('PASTIKAN URL BENAR'); break;
 }
 
@@ -53,6 +68,7 @@ switch(testName){
     case 'diare_patofis' : testTitle.innerHTML = "Test Diare Patofisiologi"; break;
     case 'infeksi_farmako' : testTitle.innerHTML = "Test Infeksi Farmakoterapi"; break;
     case 'infeksi_patofis' : testTitle.innerHTML = "Test Infeksi Patofisiologi"; break;
+    case 'kasus_konversi' : testTitle.innerHTML = "Test Kasus Konversi" ; break;
     default: alert('PASTIKAN URL BENAR'); break;
 }
 
