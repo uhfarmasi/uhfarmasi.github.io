@@ -29,7 +29,9 @@ var infeksi_patofis_questions = [
     "3.	Jelaskan secara singkat mekanisme terjadinya nyeri",
     "4.	Sebutkan 3 mediator inflamasi",
     "5.	Jelaskan secara singkat mekanisme terjadinya demam",
-    "6.	sebutkan bagian-bagian (1-4) dari steruktur sel syaraf"
+    `
+    <img src="data:image/png;base64,${img_infeksi_patofis_6}" /><br/>
+    Sebutkan bagian-bagian (1-4) dari steruktur sel syaraf`
 ];
 
 var infeksi_farmako_questions = [
