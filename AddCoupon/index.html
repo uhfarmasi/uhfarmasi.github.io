@@ -46,11 +46,13 @@
     var preform = document.getElementById('preform');
     var couponButton = document.getElementById('couponButton');
     var kuponContainer = document.getElementById('kuponContainer');
-
-    var couponRef = db.collection("coupons_sq_diare_farmako");
-    var couponRef2 = db.collection("coupons_sq_diare_patofis");
-    var couponRef3 = db.collection("coupons_sq_infeksi_farmako");
-    var couponRef4 = db.collection("coupons_sq_infeksi_patofis");
+    
+    var couponRef = db.collection("coupons");
+    // var couponRef1 = db.collection("coupons_sq_diare_farmako");
+    // var couponRef2 = db.collection("coupons_sq_diare_patofis");
+    // var couponRef3 = db.collection("coupons_sq_infeksi_farmako");
+    // var couponRef4 = db.collection("coupons_sq_infeksi_patofis");
+    var couponRef5 = db.collection("coupons_sq_kasus_konversi");
 
     var coupons = [];
     var savedCoupons = [];
@@ -70,9 +72,31 @@
             coupons.forEach(async coupon=>{
                 try{
                     await couponRef.doc(coupon).set({insertDate: new Date()})
-                    await couponRef2.doc(coupon).set({insertDate: new Date()})
-                    await couponRef3.doc(coupon).set({insertDate: new Date()})
-                    await couponRef4.doc(coupon).set({insertDate: new Date()})
+                    // await couponRef1.doc(coupon).set({insertDate: new Date()})
+                    // await couponRef2.doc(coupon).set({insertDate: new Date()})
+                    // await couponRef3.doc(coupon).set({insertDate: new Date()})
+                    // await couponRef4.doc(coupon).set({insertDate: new Date()})
+                    await couponRef5.doc(coupon).set({insertDate: new Date()})
+                    savedCoupons.push(coupon);
+                    kuponContainer.innerHTML += `<tr><td>${coupon}</td></tr>`;
+                }catch(error){
+                    console.log(error);
+                }
+            });
+            console.table(savedCoupons);
+        }else{
+            alert('You are not an admin');
+        }
+    }
+
+    function addCouponFromTextArray(){
+        // let new_coupons = ['2SJDPN','2SKL5A','3HDZTP','3VKBEP','5DLTNR','6N3B2N','6ZVTSX','79VFCU','AGTKNB','AWFAPS','C6WQB3','CZ5V8U','G8BN2V','H2SWFB','H6BJHN','J7ZUZN','KQDDBM','L9EMAU','MEQAJU','MWTF9D','NWA84Z','P9TQLZ','R6B6DK','RA8WL6','TBL4XG','TCW75U','U2KHLV','U6CSXL','VLK86B','W65BCB','WVFPYQ','XSGX9X','YTG6UN','ZASHGX'];
+        let new_coupons = ['ABC123','AAA111'];
+        let newCouponRef = db.collection("coupons");
+        if(auth.currentUser){
+            new_coupons.forEach(async coupon=>{
+                try{
+                    await newCouponRef.doc(coupon).set({insertDate: new Date()})
                     savedCoupons.push(coupon);
                     kuponContainer.innerHTML += `<tr><td>${coupon}</td></tr>`;
                 }catch(error){
